@@ -1,7 +1,7 @@
 # Личный проект «Шесть городов»
 
 * Студент: [Вадим Быков](https://up.htmlacademy.ru/univer-nodejs-api/3/user/2437911).
-* Наставник: `Неизвестно`.
+* Наставник: [Олег Глущенко](https://htmlacademy.ru/profile/id305355).
 
 ---
 
