@@ -61,12 +61,12 @@ export class TSVFileReader implements FileReader {
         isPremium: isPremium.toLowerCase() === 'true',
         isFavorite: isFavorite.toLowerCase() === 'true',
         rating: Number.parseInt(rating, 10),
-        housingType: HousingType[housingType as keyof typeof HousingType],
+        housingType: housingType as HousingType,
         roomsCount: Number.parseInt(roomsCount, 10),
         guestsCount: Number.parseInt(guestsCount, 10),
         price: Number.parseInt(price, 10),
         conveniences: conveniences.split(';')
-          .map((convenience) => (HousingConveniences[convenience as keyof typeof HousingConveniences])),
+          .map((convenience) => (convenience as HousingConveniences)),
         author,
         commentsCount: Number.parseInt(commentsCount, 10),
         coordinates: {
