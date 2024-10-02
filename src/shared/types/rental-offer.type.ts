@@ -2,7 +2,7 @@ import {HousingType} from './housing-type.enum.js';
 import {HousingConveniences} from './housing-conveniences.enum.js';
 import {Coordinates} from './coordinates.type.js';
 
-export type RentalOffer = {
+export type RentOffer = {
   title: string,
   description: string,
   createdDate: Date,
