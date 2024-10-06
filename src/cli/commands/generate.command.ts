@@ -24,8 +24,6 @@ export class GenerateCommand implements Command {
       console.error('Can\'t generate data');
       console.error(getErrorMessage(error));
     }
-
-
   }
 
   private async write(filepath: string, offerCount: number) {

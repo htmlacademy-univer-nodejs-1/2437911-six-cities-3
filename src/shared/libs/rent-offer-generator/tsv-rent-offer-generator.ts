@@ -6,7 +6,6 @@ import {HousingType, MockServerData} from '../../types/index.js';
 const MIN_RATING = 1;
 const MAX_RATING = 5;
 
-
 const MIN_PRICE = 100;
 const MAX_PRICE = 100000;
 
