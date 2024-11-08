@@ -1,9 +1,9 @@
-import {Command} from './command.interface.js';
-import {MockServerData} from '../../shared/types/index.js';
 import got from 'got';
-import {TSVRentOfferGenerator} from '../../shared/libs/rent-offer-generator/tsv-rent-offer-generator.js';
-import {TSVFileWriter} from '../../shared/libs/file-writer/index.js';
 import {getErrorMessage} from '../../shared/helpers/index.js';
+import {TSVFileWriter} from '../../shared/libs/file-writer/index.js';
+import {TSVRentOfferGenerator} from '../../shared/libs/rent-offer-generator/tsv-rent-offer-generator.js';
+import {MockServerData} from '../../shared/types/index.js';
+import {Command} from './command.interface.js';
 
 export class GenerateCommand implements Command {
   private initialData: MockServerData;
@@ -15,7 +15,7 @@ export class GenerateCommand implements Command {
   public async execute(...parameters: string[]): Promise<void> {
     const [count, filepath, url] = parameters;
     const offerCount = Number.parseInt(count, 10);
-
+    console.error('123');
     try {
       await this.load(url);
       await this.write(filepath, offerCount);

@@ -1,4 +1,4 @@
-import {HousingConveniences, HousingType, RentOffer} from '../types/index.js';
+import {HousingConveniences, HousingType, RentOffer, UserType} from '../types/index.js';
 
 export function createRentOffer(offerData: string): RentOffer {
   const [
@@ -16,10 +16,20 @@ export function createRentOffer(offerData: string): RentOffer {
     guestsCount,
     price,
     conveniences,
-    author,
+    firstname,
+    email,
+    avatarPath,
+    type,
     commentsCount,
     coordinates
   ] = offerData.replace('\n', '').split('\t');
+
+  const author = {
+    firstname,
+    email,
+    avatarPath,
+    type: type as UserType
+  };
 
   return {
     title,
@@ -37,7 +47,7 @@ export function createRentOffer(offerData: string): RentOffer {
     price: Number.parseInt(price, 10),
     conveniences: conveniences.split(';')
       .map((convenience) => (convenience as HousingConveniences)),
-    author,
+    author: author,
     commentsCount: Number.parseInt(commentsCount, 10),
     coordinates: {
       latitude: Number.parseFloat(coordinates.split(';')[0]),
