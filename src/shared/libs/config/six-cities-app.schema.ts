@@ -54,6 +54,6 @@ export const configSixCitiesAppSchema = convict<SixCitiesAppSchema>({
     doc: 'Database name (MongoDB)',
     format: String,
     env: 'DB_NAME',
-    default: 'six-cities-db'
+    default: 'sixCitiesDb'
   }
 });

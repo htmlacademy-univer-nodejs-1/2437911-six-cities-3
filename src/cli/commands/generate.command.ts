@@ -15,7 +15,6 @@ export class GenerateCommand implements Command {
   public async execute(...parameters: string[]): Promise<void> {
     const [count, filepath, url] = parameters;
     const offerCount = Number.parseInt(count, 10);
-    console.error('123');
     try {
       await this.load(url);
       await this.write(filepath, offerCount);
