@@ -1,0 +1,780 @@
+openapi: 3.1.0
+info:
+  title: API сервер для учебного проекта «Шесть городов».
+  description: |-
+    * Список ресурсов и маршрутов сервера «Шесть городов».
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+    identifier: MIT
+  version: 2.0.0
+
+tags:
+  - name: rent-offers
+    description: Действия с объявлениями по аренде.
+  - name: comments
+    description: Действия с комментариями.
+  - name: users
+    description: Действия с пользователем.
+
+paths:
+  /rent-offers:
+    post:
+      operationId: postRentOffer
+      tags:
+        - rent-offers
+      summary: Создание нового предложения по аренде
+      description: Создает новое преджлжение по аренде
+
+      parameters:
+        - in: header
+          name: AuthToken
+          schema:
+            $ref: '#/components/schemas/authToken'
+
+      requestBody:
+        description: Информация для создания нового предложения по аренде
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createRentOffer'
+        required: true
+
+      responses:
+        "201":
+          description: Объект создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rentOffer'
+        "403":
+          description: Сессия невалидна
+
+    get:
+      tags:
+        - rent-offers
+      summary: Получение списка предложений по аренде
+      description: Отдает список предлжожений по аренде
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Информация о предложениях по аренде
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/rentOfferResponse'
+
+  /rent-offers/{id}:
+    get:
+      tags:
+        - rent-offers
+      summary: Получить детальную информацию о предложении
+      description: Отдает полную информацию о предложении по аренде
+
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+
+    responses:
+      "200":
+        description: Подробная инфорамция предложении по аренде
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/rentOfferResponse'
+
+    patch:
+      tags:
+        - rent-offers
+      summary: Редактирование предложения по аренде
+      description: Редактирует преджлжение по аренде
+
+      parameters:
+        - in: header
+          name: AuthToken
+          schema:
+            $ref: '#/components/schemas/authToken'
+        - in: path
+          name: id
+          schema:
+            type: string
+
+      requestBody:
+        description: Информация для создания нового предложения по аренде
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateRentOffer'
+        required: true
+
+      responses:
+        "201":
+          description: Объект обновлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rentOffer'
+        "403":
+          description: Сессия невалидна или недостаточно прав
+
+    delete:
+      tags:
+        - rent-offers
+      summary: Удаление предложения по аренде
+      description: Удаляет преджлжение по аренде
+
+      parameters:
+        - in: header
+          name: AuthToken
+          schema:
+            $ref: '#/components/schemas/authToken'
+        - in: path
+          name: id
+          schema:
+            type: string
+
+      responses:
+        "201":
+          description: Объект удален
+        "403":
+          description: Сессия невалидна или недостаточно прав
+
+  /rent-offers/{id}/comments:
+    get:
+      tags:
+        - rent-offers
+        - comments
+      summary: Получить комментарии к предложению по аренде
+      description: Отдает список комментариев к предлоржению по аренде
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Спмисок комментариев
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/commentResponse'
+    post:
+      tags:
+        - rent-offers
+        - comments
+      summary: Добавить комментарий к предложению по аренде
+      description: Добавляет комментарий к предложению по аренде
+
+      parameters:
+        - in: header
+          name: AuthToken
+          schema:
+            $ref: '#/components/schemas/authToken'
+        - in: path
+          name: id
+          schema:
+            type: string
+
+      requestBody:
+        description: Информация для создания нового комментария
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createComment'
+        required: true
+
+      responses:
+        "201":
+          description: Объект создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/commentResponse'
+        "403":
+          description: Сессия невалидна
+
+  /rent-offers/city/{city}/premium:
+    get:
+      tags:
+        - rent-offers
+      summary: Получение списка премиальных предложений аренды в городе
+      description: Возвращает список премиальных предложений аренды в городе
+
+      parameters:
+        - in: path
+          name: city
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: Спмисок премиальных предложений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/rentOfferResponse'
+
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Регистрация пользователя
+      description: Регистрирует нового пользователя
+
+      requestBody:
+        description: Информация для создания нового пользователя
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createUser'
+        required: true
+
+      responses:
+        "201":
+          description: Пользователь зарегистрирован. Объект пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "409":
+          description: Пользователь с таким email уже существует
+
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: Авторизация пользователя
+      description: Авторизует пользователя на основе логина и пароля
+
+      requestBody:
+        description: Информация для авторизации пользователя
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginUser'
+        required: true
+
+      responses:
+        "200":
+          description: Пользователь успешно вошел
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/authToken'
+
+        "403":
+          description: Пользователь с таким email не существует или пароль неверный
+
+    get:
+      tags:
+        - users
+      summary: Проверка состояния авторизации пользователя
+      description: Возвращает информацию по авторизованному пользователю
+
+      parameters:
+        - in: header
+          name: AuthToken
+          schema:
+            $ref: '#/components/schemas/authToken'
+
+      responses:
+        "200":
+          description: Пользователь авторизован
+
+        "403":
+          description: Сессия невалидна
+
+  /users/logout:
+    post:
+      tags:
+        - users
+      summary: Выход из аккаунта
+      description: Выход из аккаунта пользователя
+      parameters:
+        - in: header
+          name: AuthToken
+          required: true
+          schema:
+            $ref: '#/components/schemas/authToken'
+
+      responses:
+        "200":
+          description: Пользователь успешно вышел
+
+        "404":
+          description: Сессия не найдена
+
+  /users/favorite:
+    post:
+      tags:
+        - users
+      summary: Добавление/удаление предложения аренды из избранного
+      description: Добавит или удалит предложение аренды из избранного
+
+      parameters:
+        - in: header
+          name: AuthToken
+          required: true
+          schema:
+            $ref: '#/components/schemas/authToken'
+
+      requestBody:
+        description: Предложение для добавления/удаления из избранного
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/rentOfferTitle'
+        required: true
+
+      responses:
+        "200":
+          description: Операция выполнена успешно
+
+        "403":
+          description: Сессия невалидна
+
+    get:
+      tags:
+        - users
+      summary: Получение списка избранных предложений аренды
+      description: Возвращает список избранных предложений аренды
+      parameters:
+        - in: header
+          name: AuthToken
+          required: true
+          schema:
+            $ref: '#/components/schemas/authToken'
+
+      responses:
+        "200":
+          description: Операция выполнена успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rentOfferResponse'
+        "403":
+          description: Сессия невалидна
+
+components:
+  schemas:
+    createUser:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: my-mail@example.com
+
+        firstname:
+          type: string
+          example: SuperUser
+
+        password:
+          type: string
+          example: 123456
+
+        avatarPath:
+          type: string
+          example: avatar.jpg
+
+        type:
+          type: string
+          enum:
+            - usual
+            - pro
+
+      required: [ email, firstname, password, type ]
+
+    user:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: my-mail@example.com
+
+        firstname:
+          type: string
+          example: SuperUser
+
+        avatarPath:
+          type: string
+          example: avatar.jpg
+
+        type:
+          type: string
+          enum:
+            - usual
+            - pro
+
+      required: [ email, firstname, avatarPath, type ]
+
+    loginUser:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: my-mail@example.com
+
+        password:
+          type: string
+          example: 123456
+
+      required: [ email, password ]
+
+    authToken:
+      type: string
+      example: 98761235498723764
+
+    rentOfferTitle:
+      type: string
+      example: super rent offer
+
+    rentOfferResponse:
+      type: object
+
+      properties:
+        title:
+          type: string
+          example: super rent offer
+
+        price:
+          type: number
+          example: 123
+
+        housingType:
+          type: string
+          enum:
+            - apartment
+            - house
+            - room
+            - hotel
+
+        isFavorite:
+          type: boolean
+          example: true
+
+        createdDate:
+          type: string
+          example: '2024-12-12'
+
+        city:
+          type: string
+          example: Paris
+
+        previewImage:
+          type: string
+          example: image.png
+
+        isPremium:
+          type: boolean
+          example: true
+
+        rating:
+          type: number
+          example: 3
+
+        commentsCount:
+          type: number
+          example: 5
+
+      required: [ title, price, housingType, isFavorite, createdDate, city, previewImage, isPremium, rating, commentsCount ]
+
+    createRentOffer:
+      type: object
+
+      properties:
+        title:
+          type: string
+          example: super rent offer
+
+        description:
+          type: string
+          example: super rent offer desc
+
+        createdDate:
+          type: string
+          example: '2024-12-12'
+
+        city:
+          type: string
+          example: Paris
+
+        previewImage:
+          type: string
+          example: image.png
+
+        housingPhoto:
+          type: array
+          items:
+            type: string
+
+        isPremium:
+          type: boolean
+          example: true
+
+        isFavorite:
+          type: boolean
+          example: true
+
+        housingType:
+          type: string
+          enum:
+            - apartment
+            - house
+            - room
+            - hotel
+
+        roomsCount:
+          type: number
+          example: 3
+
+        guestsCount:
+          type: number
+          example: 3
+
+        price:
+          type: number
+          example: 123
+
+        conveniences:
+          type: array
+          items:
+            type: string
+            enum:
+              - Breakfast
+              - AirConditioning
+              - LaptopFriendlyWorkspace
+              - BabySeat
+              - Washer
+              - Towels
+              - Fridge
+
+        authorId:
+          type: string
+          example: 1231231
+
+      required: [ title, description, createdDate, city, previewImage, housingPhoto, isPremium, isFavorite, housingType, roomsCount, guestsCount, price, conveniences, authorId ]
+
+    updateRentOffer:
+      type: object
+
+      properties:
+        title:
+          type: string
+          example: super rent offer
+
+        description:
+          type: string
+          example: super rent offer desc
+
+        createdDate:
+          type: string
+          example: '2024-12-12'
+
+        city:
+          type: string
+          example: Paris
+
+        previewImage:
+          type: string
+          example: image.png
+
+        housingPhoto:
+          type: array
+          items:
+            type: string
+
+        isPremium:
+          type: boolean
+          example: true
+
+        isFavorite:
+          type: boolean
+          example: true
+
+        housingType:
+          type: string
+          enum:
+            - apartment
+            - house
+            - room
+            - hotel
+
+        roomsCount:
+          type: number
+          example: 3
+
+        guestsCount:
+          type: number
+          example: 3
+
+        price:
+          type: number
+          example: 123
+
+        conveniences:
+          type: array
+          items:
+            type: string
+            enum:
+              - Breakfast
+              - AirConditioning
+              - LaptopFriendlyWorkspace
+              - BabySeat
+              - Washer
+              - Towels
+              - Fridge
+
+        authorId:
+          type: string
+          example: 1231231
+
+      required: [ title, description, createdDate, city, previewImage, housingPhoto, isPremium, isFavorite, housingType, roomsCount, guestsCount, price, conveniences, authorId ]
+
+    rentOffer:
+      type: object
+
+      properties:
+        title:
+          type: string
+          example: super rent offer
+
+        description:
+          type: string
+          example: super rent offer desc
+
+        createdDate:
+          type: string
+          example: '2024-12-12'
+
+        city:
+          type: string
+          example: Paris
+
+        previewImage:
+          type: string
+          example: image.png
+
+        housingPhoto:
+          type: array
+          items:
+            type: string
+
+        isPremium:
+          type: boolean
+          example: true
+
+        isFavorite:
+          type: boolean
+          example: true
+
+        housingType:
+          type: string
+          enum:
+            - apartment
+            - house
+            - room
+            - hotel
+
+        roomsCount:
+          type: number
+          example: 3
+
+        guestsCount:
+          type: number
+          example: 3
+
+        price:
+          type: number
+          example: 123
+
+        conveniences:
+          type: array
+          items:
+            type: string
+            enum:
+              - Breakfast
+              - AirConditioning
+              - LaptopFriendlyWorkspace
+              - BabySeat
+              - Washer
+              - Towels
+              - Fridge
+
+        authorId:
+          type: string
+          example: 1231231
+
+        commentsCount:
+          type: number
+          example: 3
+
+        coordinates:
+          type: string
+          example: 59.11 ; 60.12
+
+        rating:
+          type: number
+          example: 3
+
+      required: [ title, description, createdDate, city, previewImage, housingPhoto, isPremium, isFavorite, housingType, roomsCount, guestsCount, price, conveniences, authorId, commentsCount, coordinates, rating ]
+
+
+    commentResponse:
+      type: object
+
+      properties:
+        text:
+          type: string
+          example: some text
+
+        createdDate:
+          type: string
+          example: 2024-12-12
+
+        rating:
+          type: number
+          example: 4
+
+        author:
+          type: string
+          example: name
+
+      required: [ text, createdDate, rating, author ]
+
+    createComment:
+      type: object
+
+      properties:
+        text:
+          type: string
+          example: some text
+
+        rating:
+          type: number
+          example: 4
+
+        author:
+          type: string
+          example: name
+
+      required: [ text, rating, author ]
