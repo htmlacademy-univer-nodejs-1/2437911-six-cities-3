@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {generateRandomValue, getRandomItem, getRandomItems} from '../../helpers/index.js';
-import {RentOfferGenerator} from './rent-offer-generator.interface.js';
 import {HousingType, MockServerData} from '../../types/index.js';
+import {RentOfferGenerator} from './rent-offer-generator.interface.js';
 
 const MIN_RATING = 1;
 const MAX_RATING = 5;
@@ -36,7 +36,10 @@ export class TSVRentOfferGenerator implements RentOfferGenerator {
     const guestCount = generateRandomValue(MIN_GUEST_COUNT, MAX_GUEST_COUNT).toString();
     const price = generateRandomValue(MIN_PRICE, MAX_PRICE).toString();
     const conveniences = getRandomItems(this.mockData.conveniences).join(';');
-    const author = getRandomItem(this.mockData.authors);
+    const firstname = getRandomItem(this.mockData.firstnames);
+    const email = getRandomItem(this.mockData.emails);
+    const avatarPath = getRandomItem(this.mockData.avatarPaths);
+    const type = getRandomItem(this.mockData.types);
     const commentsCount = getRandomItem(this.mockData.commentsCount);
 
     const createdDate = dayjs()
@@ -50,7 +53,7 @@ export class TSVRentOfferGenerator implements RentOfferGenerator {
     return [
       title, description, createdDate, city, previewImage, housingPhoto,
       isPremium, isFavorite, rating, housingType, roomsCount, guestCount,
-      price, conveniences, author, commentsCount, coordinates
+      price, conveniences, firstname, email, avatarPath, type, commentsCount, coordinates
     ].join('\t');
   }
 }
