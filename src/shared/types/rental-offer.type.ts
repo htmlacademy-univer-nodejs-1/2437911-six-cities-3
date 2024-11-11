@@ -9,7 +9,7 @@ export type RentOffer = {
   createdDate: Date,
   city: string,
   previewImage: string,
-  housingPhoto: string,
+  housingPhoto: string[],
   isPremium: boolean,
   isFavorite: boolean,
   rating: number,
