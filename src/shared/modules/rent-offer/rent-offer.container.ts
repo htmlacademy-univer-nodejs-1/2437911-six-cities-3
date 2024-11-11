@@ -12,3 +12,4 @@ export function createRentOfferContainer() {
 
   return userContainer;
 }
+
