@@ -97,4 +97,25 @@ export class DefaultRentOfferService implements RentOfferService {
 
     return result;
   }
+
+  public async addFavorite(offerId: string, userId: string): Promise<void> {
+    await this.rentOfferModel.updateOne(
+      {_id: userId},
+      {$addToSet: {favorites: offerId}}
+    );
+  }
+
+  public async deleteFavorite(offerId: string, userId: string): Promise<void> {
+    await this.rentOfferModel.updateOne(
+      {_id: userId},
+      {$pull: {favorites: offerId}}
+    );
+  }
+
+  public async calculateRating(oldRating: number, newRating: number, ratingsCount: number, offerId: string): Promise<void> {
+    await this.rentOfferModel
+      .findByIdAndUpdate(offerId,
+        {rating: (newRating + oldRating) / ratingsCount},
+        {new: true});
+  }
 }

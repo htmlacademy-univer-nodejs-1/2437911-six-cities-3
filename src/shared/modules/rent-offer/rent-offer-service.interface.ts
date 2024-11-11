@@ -12,7 +12,13 @@ export interface RentOfferService {
 
   delete(id: string): Promise<void>;
 
-  findPremiumByCity(city: string): Promise<types.DocumentType<RentOfferEntity>[]>
+  findPremiumByCity(city: string): Promise<types.DocumentType<RentOfferEntity>[]>;
 
-  patch(rentOfferId: string, dto: PatchRentOfferDto): Promise<types.DocumentType<RentOfferEntity> | null>
+  patch(rentOfferId: string, dto: PatchRentOfferDto): Promise<types.DocumentType<RentOfferEntity> | null>;
+
+  addFavorite(rentOfferId: string, userId: string): Promise<void>;
+
+  deleteFavorite(rentOfferId: string, userId: string): Promise<void>;
+
+  calculateRating(oldRating: number, newRating: number, ratingsCount: number, offerId: string): Promise<void>;
 }
