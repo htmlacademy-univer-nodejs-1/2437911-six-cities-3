@@ -1,6 +1,6 @@
 import {Coordinates, HousingConveniences, HousingType} from '../../../types/index.js';
 
-export class CreateRentOfferDto {
+export class PatchRentOfferDto {
   title: string;
   description: string;
   createdDate: Date;
@@ -9,11 +9,13 @@ export class CreateRentOfferDto {
   housingPhoto: string[];
   isPremium: boolean;
   isFavorite: boolean;
+  rating: number;
   housingType: HousingType;
   roomsCount: number;
   guestsCount: number;
   price: number;
   conveniences: HousingConveniences[];
   authorId: string;
+  commentsCount: number;
   coordinates: Coordinates;
 }

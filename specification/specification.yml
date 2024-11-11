@@ -56,12 +56,6 @@ paths:
       summary: Получение списка предложений по аренде
       description: Отдает список предлжожений по аренде
 
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-
       responses:
         "200":
           description: Информация о предложениях по аренде
@@ -79,19 +73,19 @@ paths:
       summary: Получить детальную информацию о предложении
       description: Отдает полную информацию о предложении по аренде
 
-    parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
 
-    responses:
-      "200":
-        description: Подробная инфорамция предложении по аренде
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/rentOfferResponse'
+      responses:
+        "200":
+          description: Подробная инфорамция предложении по аренде
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rentOfferResponse'
 
     patch:
       tags:

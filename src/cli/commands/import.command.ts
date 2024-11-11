@@ -77,14 +77,12 @@ export class ImportCommand implements Command {
       housingPhoto: rentOffer.housingPhoto,
       isPremium: rentOffer.isPremium,
       isFavorite: rentOffer.isFavorite,
-      rating: rentOffer.rating,
       housingType: rentOffer.housingType,
       roomsCount: rentOffer.roomsCount,
       guestsCount: rentOffer.guestsCount,
       price: rentOffer.price,
       conveniences: rentOffer.conveniences,
       authorId: user.id,
-      commentsCount: rentOffer.commentsCount,
       coordinates: rentOffer.coordinates
     });
 
