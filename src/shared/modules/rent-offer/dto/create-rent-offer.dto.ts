@@ -1,17 +1,5 @@
 import {Coordinates, HousingConveniences, HousingType} from '../../../types/index.js';
-import {
-  IsArray,
-  IsDateString,
-  IsEnum,
-  IsInt,
-  IsMongoId,
-  IsString,
-  Length,
-  Max,
-  MaxLength,
-  Min,
-  MinLength
-} from 'class-validator';
+import {IsArray, IsDateString, IsEnum, IsInt, IsString, Length, Max, MaxLength, Min, MinLength} from 'class-validator';
 import {CreateRentOfferValidationMessage} from './create-rent-offer.messages.js';
 
 export class CreateRentOfferDto {
@@ -66,7 +54,6 @@ export class CreateRentOfferDto {
   @MinLength(1, {message: CreateRentOfferValidationMessage.conveniences.length})
   public conveniences: HousingConveniences[];
 
-  @IsMongoId({message: CreateRentOfferValidationMessage.authorId.invalidId})
   public authorId: string;
 
   public coordinates: Coordinates;

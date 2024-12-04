@@ -297,26 +297,6 @@ paths:
         "403":
           description: Сессия невалидна
 
-  /users/logout:
-    post:
-      tags:
-        - users
-      summary: Выход из аккаунта
-      description: Выход из аккаунта пользователя
-      parameters:
-        - in: header
-          name: AuthToken
-          required: true
-          schema:
-            $ref: '#/components/schemas/authToken'
-
-      responses:
-        "200":
-          description: Пользователь успешно вышел
-
-        "404":
-          description: Сессия не найдена
-
   /users/favorite:
     post:
       tags:
