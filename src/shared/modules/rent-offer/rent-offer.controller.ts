@@ -1,7 +1,7 @@
 import {inject, injectable} from 'inversify';
 import {
   BaseController,
-  HttpError,
+  DocumentExistsMiddleware,
   HttpMethod,
   ValidateDtoMiddleware,
   ValidateObjectIdMiddleware
@@ -18,7 +18,6 @@ import {ParamRentOfferId} from './types/param-rent-offer-id.type.js';
 import {CommentRdo} from '../comment/rdo/comment.rdo.js';
 import {CommentService} from '../comment/comment-service.interface.js';
 import {UpdateRentOfferRequest} from './update-rent-offer-request.js';
-import {StatusCodes} from 'http-status-codes';
 import {RequestQuery} from './types/request-query.type.js';
 import {ParamsCity} from './types/param-city.type.js';
 import {CreateRentOfferDto} from './dto/create-rent-offer.dto.js';
@@ -45,25 +44,34 @@ export class RentOfferController extends BaseController {
       path: '/:rentOfferId',
       method: HttpMethod.Post,
       handler: this.show,
-      middlewares: [new ValidateObjectIdMiddleware('rentOfferId')]
+      middlewares: [
+        new ValidateObjectIdMiddleware('rentOfferId'),
+        new DocumentExistsMiddleware(this.rentOfferService, 'RentOffer', 'rentOfferId')]
     });
     this.addRoute({
       path: '/:rentOfferId',
       method: HttpMethod.Patch,
       handler: this.update,
-      middlewares: [new ValidateObjectIdMiddleware('rentOfferId'), new ValidateDtoMiddleware(PatchRentOfferDto)]
+      middlewares: [
+        new ValidateObjectIdMiddleware('rentOfferId'),
+        new ValidateDtoMiddleware(PatchRentOfferDto),
+        new DocumentExistsMiddleware(this.rentOfferService, 'RentOffer', 'rentOfferId')]
     });
     this.addRoute({
       path: '/:rentOfferId',
       method: HttpMethod.Delete,
       handler: this.delete,
-      middlewares: [new ValidateObjectIdMiddleware('rentOfferId')]
+      middlewares: [
+        new ValidateObjectIdMiddleware('rentOfferId'),
+        new DocumentExistsMiddleware(this.rentOfferService, 'RentOffer', 'rentOfferId')]
     });
     this.addRoute({
       path: '/:rentOfferId/comments',
       method: HttpMethod.Get,
       handler: this.getComments,
-      middlewares: [new ValidateObjectIdMiddleware('rentOfferId')]
+      middlewares: [
+        new ValidateObjectIdMiddleware('rentOfferId'),
+        new DocumentExistsMiddleware(this.rentOfferService, 'RentOffer', 'rentOfferId')]
     });
     this.addRoute({path: 'city/:city/premium', method: HttpMethod.Get, handler: this.getCityPremium});
 
@@ -97,15 +105,6 @@ export class RentOfferController extends BaseController {
     params
   }: UpdateRentOfferRequest, res: Response): Promise<void> {
     const updatedRentOffer = await this.rentOfferService.patch(params.rentOfferId, body);
-
-    if (!updatedRentOffer) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Rent offer with id ${params.rentOfferId} not found.`,
-        'RentOfferController'
-      );
-    }
-
     this.created(res, fillDTO(RentOfferRdo, updatedRentOffer));
   }
 
@@ -119,14 +118,6 @@ export class RentOfferController extends BaseController {
     {params}: Request<ParamRentOfferId>,
     res: Response
   ): Promise<void> {
-    if (!await this.rentOfferService.exists(params.rentOfferId)) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Rent offer with id ${params.rentOfferId} not found.`,
-        'RentOfferController'
-      );
-    }
-
     const comments = await this.commentService.findByRentOfferId(params.rentOfferId);
     this.ok(res, fillDTO(CommentRdo, comments));
   }
