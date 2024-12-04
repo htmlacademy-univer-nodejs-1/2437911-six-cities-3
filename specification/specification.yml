@@ -166,6 +166,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/commentResponse'
+
+  /comments:
     post:
       tags:
         - rent-offers
@@ -394,7 +396,7 @@ components:
             - usual
             - pro
 
-      required: [ email, firstname, password, type ]
+      required: [ email, firstname, password, types ]
 
     user:
       type: object
@@ -418,7 +420,7 @@ components:
             - usual
             - pro
 
-      required: [ email, firstname, avatarPath, type ]
+      required: [ email, firstname, avatarPath, types ]
 
     loginUser:
       type: object
