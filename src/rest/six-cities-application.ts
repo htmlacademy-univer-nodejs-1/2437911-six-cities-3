@@ -18,6 +18,7 @@ export class SixCitiesApplication {
     @inject(Component.RentOfferController) private readonly rentOfferController: Controller,
     @inject(Component.ExceptionFilter) private readonly appExceptionFilter: ExceptionFilter,
     @inject(Component.UserController) private readonly userController: Controller,
+    @inject(Component.CommentController) private readonly commentController: Controller,
   ) {
     this.server = express();
   }
@@ -54,6 +55,7 @@ export class SixCitiesApplication {
   private async _initControllers() {
     this.server.use('/rent-offers', this.rentOfferController.router);
     this.server.use('/users', this.userController.router);
+    this.server.use('/comments', this.commentController.router);
   }
 
   private async _initMiddleware() {
