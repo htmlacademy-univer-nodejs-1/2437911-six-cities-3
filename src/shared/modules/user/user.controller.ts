@@ -19,6 +19,8 @@ import {UserRdo} from './rdo/user.rdo.js';
 import {LoginUserRequest} from './login-user-request.js';
 import {CreateUserDto} from './dto/create-user.dto.js';
 import {LoginUserDto} from './dto/login-user.dto.js';
+import {SessionService} from '../session/session-service.interface.js';
+import {LoggedUserRdo} from './rdo/logged-user.rdo.js';
 
 @injectable()
 export class UserController extends BaseController {
@@ -26,6 +28,7 @@ export class UserController extends BaseController {
     @inject(Component.Logger) protected readonly logger: Logger,
     @inject(Component.UserService) private readonly userService: UserService,
     @inject(Component.Config) private readonly configService: Config<SixCitiesAppSchema>,
+    @inject(Component.SessionService) private readonly sessionService: SessionService,
   ) {
     super(logger);
     this.logger.info('Register routes for UserController…');
@@ -42,7 +45,6 @@ export class UserController extends BaseController {
       handler: this.login,
       middlewares: [new ValidateDtoMiddleware(LoginUserDto)]
     });
-    this.addRoute({path: '/logout', method: HttpMethod.Post, handler: this.logout});
     this.addRoute({path: '/login', method: HttpMethod.Get, handler: this.getSession});
     this.addRoute({
       path: '/:userId/avatar',
@@ -75,43 +77,31 @@ export class UserController extends BaseController {
 
   public async login(
     {body}: LoginUserRequest,
-    _res: Response,
+    res: Response,
   ): Promise<void> {
-    const existsUser = await this.userService.findByEmail(body.email);
-
-    if (!existsUser) {
-      throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        `User with email ${body.email} not found.`,
-        'UserController',
-      );
-    }
-
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'UserController',
-    );
-  }
-
-  public async logout(
-    _res: Response,
-  ): Promise<void> {
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'UserController',
-    );
+    const user = await this.sessionService.verify(body);
+    const token = await this.sessionService.authenticate(user);
+    const responseData = fillDTO(LoggedUserRdo, {
+      email: user.email,
+      token,
+    });
+    this.ok(res, responseData);
   }
 
   public async getSession(
-    _res: Response,
+    {tokenPayload: {email}}: Request, res: Response
   ): Promise<void> {
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'UserController',
-    );
+    const foundedUser = await this.userService.findByEmail(email);
+
+    if (!foundedUser) {
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        'Unauthorized',
+        'UserController'
+      );
+    }
+
+    this.ok(res, fillDTO(LoggedUserRdo, foundedUser));
   }
 
   public async uploadAvatar(req: Request, res: Response) {

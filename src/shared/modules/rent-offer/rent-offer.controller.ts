@@ -3,6 +3,7 @@ import {
   BaseController,
   DocumentExistsMiddleware,
   HttpMethod,
+  PrivateRouteMiddleware,
   ValidateDtoMiddleware,
   ValidateObjectIdMiddleware
 } from '../../libs/rest/index.js';
@@ -42,7 +43,7 @@ export class RentOfferController extends BaseController {
     this.addRoute({path: '/', method: HttpMethod.Get, handler: this.index});
     this.addRoute({
       path: '/:rentOfferId',
-      method: HttpMethod.Post,
+      method: HttpMethod.Get,
       handler: this.show,
       middlewares: [
         new ValidateObjectIdMiddleware('rentOfferId'),
@@ -53,6 +54,7 @@ export class RentOfferController extends BaseController {
       method: HttpMethod.Patch,
       handler: this.update,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('rentOfferId'),
         new ValidateDtoMiddleware(PatchRentOfferDto),
         new DocumentExistsMiddleware(this.rentOfferService, 'RentOffer', 'rentOfferId')]
@@ -62,6 +64,7 @@ export class RentOfferController extends BaseController {
       method: HttpMethod.Delete,
       handler: this.delete,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('rentOfferId'),
         new DocumentExistsMiddleware(this.rentOfferService, 'RentOffer', 'rentOfferId')]
     });
@@ -78,10 +81,10 @@ export class RentOfferController extends BaseController {
   }
 
   public async create(
-    {body}: CreateRentOfferRequest,
+    {body, tokenPayload}: CreateRentOfferRequest,
     res: Response,
   ): Promise<void> {
-    const result = await this.rentOfferService.create(body);
+    const result = await this.rentOfferService.create({...body, authorId: tokenPayload.id});
     const rentOffer = await this.rentOfferService.findById(result.id);
     this.created(res, fillDTO(RentOfferRdo, rentOffer));
   }
