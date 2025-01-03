@@ -17,13 +17,9 @@ export interface RentOfferService extends DocumentExists {
 
   patch(rentOfferId: string, dto: PatchRentOfferDto): Promise<types.DocumentType<RentOfferEntity> | null>;
 
-  addFavorite(rentOfferId: string, userId: string): Promise<void>;
-
-  deleteFavorite(rentOfferId: string, userId: string): Promise<void>;
-
   calculateRating(oldRating: number, newRating: number, ratingsCount: number, offerId: string): Promise<void>;
 
-  incCommentCount(offerId: string): Promise<DocumentType<RentOfferEntity> | null>;
+  addComment(rentOfferId: string, rating: number): Promise<DocumentType<RentOfferEntity> | null>;
 
   exists(documentId: string): Promise<boolean>;
 }

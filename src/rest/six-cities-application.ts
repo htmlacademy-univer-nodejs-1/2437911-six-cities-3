@@ -5,8 +5,7 @@ import {DatabaseClient} from '../shared/libs/database-client/index.js';
 import {Logger} from '../shared/libs/logger/index.js';
 import {Component} from '../shared/types/index.js';
 import express, {Express} from 'express';
-import {Controller, ExceptionFilter} from '../shared/libs/rest/index.js';
-import {ParseTokenMiddleware} from '../shared/libs/rest/middleware/parse-token.middleware.js';
+import {Controller, ExceptionFilter, ParseTokenMiddleware} from '../shared/libs/rest/index.js';
 
 @injectable()
 export class SixCitiesApplication {
@@ -42,7 +41,7 @@ export class SixCitiesApplication {
 
     this.logger.info('Init exception filters');
     await this._initExceptionFilters();
-    this.logger.info('Exception filters initialization compleated');
+    this.logger.info('Exception filters initialization completed');
 
     this.logger.info('Try to init server…');
     await this._initServer();

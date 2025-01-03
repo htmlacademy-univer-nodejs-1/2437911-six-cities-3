@@ -1,12 +1,12 @@
 import {Coordinates, HousingConveniences, HousingType} from '../../../types/index.js';
 import {
+  ArrayMaxSize,
+  ArrayMinSize,
   IsArray,
   IsDateString,
   IsEnum,
   IsInt,
-  IsMongoId,
   IsString,
-  Length,
   Max,
   MaxLength,
   Min,
@@ -35,12 +35,12 @@ export class PatchRentOfferDto {
   public previewImage: string;
 
   @IsArray({message: PatchRentOfferValidationMessage.housingPhoto.invalidFormat})
-  @Length(6, 6, {message: PatchRentOfferValidationMessage.housingPhoto.length})
+  @ArrayMinSize(6, {message: PatchRentOfferValidationMessage.housingPhoto.length})
+  @ArrayMaxSize(6, {message: PatchRentOfferValidationMessage.housingPhoto.length})
   @IsString({each: true, message: PatchRentOfferValidationMessage.housingPhoto.invalidValuesFormat})
   public housingPhoto: string[];
 
   public isPremium: boolean;
-  public isFavorite: boolean;
 
   @IsEnum(HousingType, {message: PatchRentOfferValidationMessage.housingType.invalid})
   public housingType: HousingType;
@@ -62,10 +62,9 @@ export class PatchRentOfferDto {
 
   @IsArray({message: PatchRentOfferValidationMessage.conveniences.invalidFormat})
   @IsEnum(HousingConveniences, {each: true, message: PatchRentOfferValidationMessage.conveniences.invalid})
-  @MinLength(1, {message: PatchRentOfferValidationMessage.conveniences.length})
+  @ArrayMinSize(1, {message: PatchRentOfferValidationMessage.conveniences.length})
   public conveniences: HousingConveniences[];
 
-  @IsMongoId({message: PatchRentOfferValidationMessage.authorId.invalidId})
   public authorId: string;
 
   public coordinates: Coordinates;

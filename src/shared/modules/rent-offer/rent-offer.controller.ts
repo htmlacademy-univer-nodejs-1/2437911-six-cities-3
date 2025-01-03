@@ -4,6 +4,7 @@ import {
   DocumentExistsMiddleware,
   HttpMethod,
   PrivateRouteMiddleware,
+  RequestBody,
   ValidateDtoMiddleware,
   ValidateObjectIdMiddleware
 } from '../../libs/rest/index.js';
@@ -23,6 +24,7 @@ import {RequestQuery} from './types/request-query.type.js';
 import {ParamsCity} from './types/param-city.type.js';
 import {CreateRentOfferDto} from './dto/create-rent-offer.dto.js';
 import {PatchRentOfferDto} from './dto/patch-rent-offer.dto.js';
+import {UserService} from '../user/user-service.interface.js';
 
 @injectable()
 export class RentOfferController extends BaseController {
@@ -30,6 +32,7 @@ export class RentOfferController extends BaseController {
     @inject(Component.Logger) protected readonly logger: Logger,
     @inject(Component.RentOfferService) private readonly rentOfferService: RentOfferService,
     @inject(Component.CommentService) private readonly commentService: CommentService,
+    @inject(Component.UserService) private readonly userService: UserService
   ) {
     super(logger);
     this.logger.info('Register routes for RentOfferController…');
@@ -76,7 +79,7 @@ export class RentOfferController extends BaseController {
         new ValidateObjectIdMiddleware('rentOfferId'),
         new DocumentExistsMiddleware(this.rentOfferService, 'RentOffer', 'rentOfferId')]
     });
-    this.addRoute({path: 'city/:city/premium', method: HttpMethod.Get, handler: this.getCityPremium});
+    this.addRoute({path: '/city/:city/premium', method: HttpMethod.Get, handler: this.getCityPremium});
 
   }
 
@@ -89,18 +92,32 @@ export class RentOfferController extends BaseController {
     this.created(res, fillDTO(RentOfferRdo, rentOffer));
   }
 
-  public async index(_req: Request<unknown, unknown, unknown, RequestQuery>, res: Response): Promise<void> {
-    const rentOffers = await this.rentOfferService.find(_req.query.limit);
+  public async index(_req: Request<unknown, RequestBody, unknown, RequestQuery>, res: Response): Promise<void> {
+    const rentOffers = await this.rentOfferService.find(Number(_req.query.limit));
+
+    if (_req.tokenPayload) {
+      const favoriteOffers = await this.userService.findFavoriteOffers(_req.tokenPayload.id);
+      const favoriteOfferIds = favoriteOffers.map((offer) => offer.id);
+      for (const rentOffer of rentOffers) {
+        rentOffer.isFavorite = favoriteOfferIds.includes(rentOffer._id.toString());
+      }
+    }
+
     this.ok(res, fillDTO(RentOfferResponseRdo, rentOffers));
   }
 
   public async show(
-    {params}: Request<ParamRentOfferId>,
+    {params, tokenPayload}: Request<ParamRentOfferId, RequestBody>,
     res: Response,
   ): Promise<void> {
     const {rentOfferId} = params;
     const result = await this.rentOfferService.findById(rentOfferId);
-    this.ok(res, fillDTO(RentOfferResponseRdo, result));
+    if (tokenPayload && result) {
+      const favoriteOffers = await this.userService.findFavoriteOffers(tokenPayload.id);
+      result.isFavorite = favoriteOffers.map((offer) => offer.id).includes(result.id);
+    }
+
+    this.ok(res, fillDTO(RentOfferRdo, result));
   }
 
   public async update({
@@ -114,6 +131,7 @@ export class RentOfferController extends BaseController {
   public async delete({params}: Request<ParamRentOfferId>, res: Response): Promise<void> {
     const {rentOfferId} = params;
     const rentOffer = await this.rentOfferService.delete(rentOfferId);
+    await this.commentService.deleteByRentOfferId(rentOfferId);
     this.noContent(res, rentOffer);
   }
 

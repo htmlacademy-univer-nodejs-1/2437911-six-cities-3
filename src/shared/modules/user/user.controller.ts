@@ -4,6 +4,9 @@ import {
   BaseController,
   HttpError,
   HttpMethod,
+  PrivateRouteMiddleware,
+  RequestBody,
+  RequestParams,
   UploadFileMiddleware,
   ValidateDtoMiddleware,
   ValidateObjectIdMiddleware
@@ -21,6 +24,8 @@ import {CreateUserDto} from './dto/create-user.dto.js';
 import {LoginUserDto} from './dto/login-user.dto.js';
 import {SessionService} from '../session/session-service.interface.js';
 import {LoggedUserRdo} from './rdo/logged-user.rdo.js';
+import {PatchFavoritesRentOffersDto} from '../session/dto/patch-favorites-rent-offers.dto.js';
+import {RentOfferResponseRdo} from '../rent-offer/rdo/rent-offer-response.rdo.js';
 
 @injectable()
 export class UserController extends BaseController {
@@ -54,6 +59,24 @@ export class UserController extends BaseController {
         new ValidateObjectIdMiddleware('userId'),
         new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'avatar'),
       ]
+    });
+    this.addRoute({
+      path: '/rent-offers/favorite',
+      method: HttpMethod.Post,
+      handler: this.addFavorite,
+      middlewares: [new PrivateRouteMiddleware()]
+    });
+    this.addRoute({
+      path: '/rent-offers/favorite',
+      method: HttpMethod.Delete,
+      handler: this.deleteFavorite,
+      middlewares: [new PrivateRouteMiddleware()]
+    });
+    this.addRoute({
+      path: '/rent-offers/favorite',
+      method: HttpMethod.Get,
+      handler: this.getFavorites,
+      middlewares: [new PrivateRouteMiddleware()]
     });
   }
 
@@ -104,9 +127,30 @@ export class UserController extends BaseController {
     this.ok(res, fillDTO(LoggedUserRdo, foundedUser));
   }
 
-  public async uploadAvatar(req: Request, res: Response) {
+  public async uploadAvatar(req: Request, res: Response): Promise<void> {
     this.created(res, {
       filepath: req.file?.path
     });
+  }
+
+  public async addFavorite({
+    body,
+    tokenPayload
+  }: Request<RequestParams, RequestBody, PatchFavoritesRentOffersDto>, res: Response): Promise<void> {
+    await this.userService.addFavorite(body.rentOfferId, tokenPayload.id);
+    this.noContent(res, null);
+  }
+
+  public async deleteFavorite({
+    body,
+    tokenPayload
+  }: Request<RequestParams, RequestBody, PatchFavoritesRentOffersDto>, res: Response): Promise<void> {
+    await this.userService.deleteFavorite(body.rentOfferId, tokenPayload.id);
+    this.noContent(res, null);
+  }
+
+  public async getFavorites({tokenPayload}: Request<RequestParams, RequestBody, void>, res: Response): Promise<void> {
+    const result = await this.userService.findFavoriteOffers(tokenPayload.id);
+    this.ok(res, fillDTO(RentOfferResponseRdo, result));
   }
 }

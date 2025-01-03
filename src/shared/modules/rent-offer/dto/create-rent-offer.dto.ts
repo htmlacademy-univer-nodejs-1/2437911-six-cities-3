@@ -1,5 +1,17 @@
 import {Coordinates, HousingConveniences, HousingType} from '../../../types/index.js';
-import {IsArray, IsDateString, IsEnum, IsInt, IsString, Length, Max, MaxLength, Min, MinLength} from 'class-validator';
+import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsArray,
+  IsDateString,
+  IsEnum,
+  IsInt,
+  IsString,
+  Max,
+  MaxLength,
+  Min,
+  MinLength
+} from 'class-validator';
 import {CreateRentOfferValidationMessage} from './create-rent-offer.messages.js';
 
 export class CreateRentOfferDto {
@@ -23,13 +35,12 @@ export class CreateRentOfferDto {
   public previewImage: string;
 
   @IsArray({message: CreateRentOfferValidationMessage.housingPhoto.invalidFormat})
-  @Length(6, 6, {message: CreateRentOfferValidationMessage.housingPhoto.length})
+  @ArrayMinSize(6, {message: CreateRentOfferValidationMessage.housingPhoto.length})
+  @ArrayMaxSize(6, {message: CreateRentOfferValidationMessage.housingPhoto.length})
   @IsString({each: true, message: CreateRentOfferValidationMessage.housingPhoto.invalidValuesFormat})
   public housingPhoto: string[];
 
   public isPremium: boolean;
-
-  public isFavorite: boolean;
 
   @IsEnum(HousingType, {message: CreateRentOfferValidationMessage.housingType.invalid})
   public housingType: HousingType;
@@ -51,7 +62,7 @@ export class CreateRentOfferDto {
 
   @IsArray({message: CreateRentOfferValidationMessage.conveniences.invalidFormat})
   @IsEnum(HousingConveniences, {each: true, message: CreateRentOfferValidationMessage.conveniences.invalid})
-  @MinLength(1, {message: CreateRentOfferValidationMessage.conveniences.length})
+  @ArrayMinSize(1, {message: CreateRentOfferValidationMessage.conveniences.length})
   public conveniences: HousingConveniences[];
 
   public authorId: string;
