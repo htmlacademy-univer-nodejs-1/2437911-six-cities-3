@@ -1,3 +1,4 @@
+import cors from 'cors';
 import {inject, injectable} from 'inversify';
 import {getMongoURI} from '../shared/helpers/index.js';
 import {Config, SixCitiesAppSchema} from '../shared/libs/config/index.js';
@@ -68,6 +69,7 @@ export class SixCitiesApplication {
       express.static(this.config.get('UPLOAD_DIRECTORY'))
     );
     this.server.use(authenticateMiddleware.execute.bind(authenticateMiddleware));
+    this.server.use(cors());
   }
 
   private async _initExceptionFilters() {
