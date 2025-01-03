@@ -27,9 +27,6 @@ export const CreateRentOfferValidationMessage = {
     minValue: 'Minimum price is 100',
     maxValue: 'Maximum price is 100000',
   },
-  authorId: {
-    invalidId: 'authorId field must be a valid id',
-  },
   housingType: {
     invalid: 'housing type must be valid enum value',
   },

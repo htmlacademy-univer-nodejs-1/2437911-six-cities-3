@@ -42,9 +42,9 @@ export class RentOfferRdo {
   @Expose()
   public conveniences: HousingConveniences[];
 
-  @Expose({name: 'userId'})
+  @Expose({name: 'authorId'})
   @Type(() => UserRdo)
-  public authorId: string;
+  public authorId: UserRdo;
 
   @Expose()
   public commentsCount: number;

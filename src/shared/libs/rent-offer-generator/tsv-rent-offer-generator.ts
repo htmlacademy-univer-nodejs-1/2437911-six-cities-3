@@ -29,7 +29,6 @@ export class TSVRentOfferGenerator implements RentOfferGenerator {
     const housingPhoto = getRandomItem<string>(this.mockData.housingPhotos);
     const cityWithCoordinates = getRandomItem<string>(this.mockData.citiesWithCoordinates);
     const isPremium = getRandomItem([true, false]);
-    const isFavorite = getRandomItem([true, false]);
     const rating = generateRandomValue(MIN_RATING, MAX_RATING).toString();
     const housingType = getRandomItem([HousingType.Apartment, HousingType.House, HousingType.Room, HousingType.Hotel]);
     const roomsCount = generateRandomValue(MIN_ROOMS_COUNT, MAX_ROOMS_COUNT).toString();
@@ -51,7 +50,7 @@ export class TSVRentOfferGenerator implements RentOfferGenerator {
 
     return [
       title, description, createdDate, city, previewImage, housingPhoto,
-      isPremium, isFavorite, rating, housingType, roomsCount, guestCount,
+      isPremium, rating, housingType, roomsCount, guestCount,
       price, conveniences, firstname, avatarPath, type, commentsCount, coordinates
     ].join('\t');
   }

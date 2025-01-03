@@ -20,4 +20,4 @@ async function bootstrap() {
   await application.init();
 }
 
-bootstrap();
+await bootstrap();

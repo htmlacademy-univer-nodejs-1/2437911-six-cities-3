@@ -11,7 +11,6 @@ export type RentOffer = {
   previewImage: string,
   housingPhoto: string[],
   isPremium: boolean,
-  isFavorite: boolean,
   rating: number,
   housingType: HousingType,
   roomsCount: number,

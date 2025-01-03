@@ -34,12 +34,18 @@ export class DefaultCommentService implements CommentService {
       .find({rentOfferId})
       .sort({createdAt: SortType.Down})
       .limit(CommentsLimit)
-      .populate('userId');
+      .populate('authorId');
 
     this.logger.info(`Find comments count=${result.length}`);
-
 
     return result;
   }
 
+  public async deleteByRentOfferId(rentOfferId: string): Promise<number> {
+    const result = await this.commentModel
+      .deleteMany({rentOfferId: rentOfferId})
+      .exec();
+
+    return result.deletedCount;
+  }
 }

@@ -12,7 +12,7 @@ const DEFAULT_CONTENT_TYPE = 'application/json';
 export abstract class BaseController implements Controller {
   private readonly _router: Router;
 
-  constructor(
+  public constructor(
     protected readonly logger: Logger
   ) {
     this._router = Router();
